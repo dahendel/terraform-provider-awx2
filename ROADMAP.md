@@ -1,0 +1,21 @@
+# Roadmap
+
+- [x] Create the provider
+- [x] Create the provider acceptance test
+- [x] Create the provider unit test
+- [x] Create the resource inventory
+- [x] Create the inventory group resource and tests
+- [x] Create the inventory host resource and tests
+- [x] Create inventory tests
+- [x] Basic CRUD test acc
+- [x] Create the resource user
+- [x] Users' role resource
+- [ ] Create the resource credential (HIGH)
+- [ ] Create the resource credential type (HIGH)
+- [ ] Create resource documentation
+- [x] Create the resource team
+- [x] Teams' role resource
+- [ ] Create the resource inventory scripts (MEDIUM)
+- [-] Create the resurce organization and tests
+- [x] Create the resource project and tests
+- [x] Create the resource job_template and tests

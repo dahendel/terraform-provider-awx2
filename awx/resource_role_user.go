@@ -88,7 +88,7 @@ func resourceUserRoleGrant(d *schema.ResourceData, m interface{}) error {
 	id, _ := strconv.Atoi(d.Get("user_id").(string))
 	roleID, err := getRoleID(d, m)
 	if err == nil {
-		err = awxService.GrantRole(id, roleID)
+		err = awxService.GrantRole(strconv.Itoa(id), strconv.Itoa(roleID))
 		if err != nil {
 			return err
 		}
@@ -114,10 +114,11 @@ func resourceUserRoleRevoke(d *schema.ResourceData, m interface{}) error {
 		return fmt.Errorf("User with Id %s doesn't exists",
 			d.Get("user_id").(string))
 	}
+
 	roleID, err := getRoleID(d, m)
 	if err == nil {
 		id, _ := strconv.Atoi(d.Get("user_id").(string))
-		err = awxService.RevokeRole(id, roleID)
+		err = awxService.RevokeRole(strconv.Itoa(id), strconv.Itoa(roleID))
 		if err != nil {
 			return err
 		}

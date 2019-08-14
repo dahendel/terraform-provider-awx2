@@ -104,7 +104,7 @@ func resourceProjectCreate(d *schema.ResourceData, m interface{}) error {
 
 	_, res, err := awxService.ListProjects(map[string]string{
 		"name":         d.Get("name").(string),
-		"organization": d.Get("organization_id").(string)},
+		"organization": strconv.Itoa(d.Get("organization_id").(int))},
 	)
 	if err != nil {
 		return err
@@ -124,7 +124,7 @@ func resourceProjectCreate(d *schema.ResourceData, m interface{}) error {
 		"scm_clean":                d.Get("scm_clean").(bool),
 		"scm_delete_on_update":     d.Get("scm_delete_on_update").(bool),
 		"credential_id":            AtoipOr(d.Get("credential_id").(string), nil),
-		"organization":             d.Get("organization_id").(string),
+		"organization":             d.Get("organization_id").(int),
 		"scm_update_on_launch":     d.Get("scm_update_on_launch").(bool),
 		"scm_update_cache_timeout": d.Get("scm_update_cache_timeout").(int),
 	}, map[string]string{})
@@ -141,7 +141,7 @@ func resourceProjectUpdate(d *schema.ResourceData, m interface{}) error {
 	awxService := awx.ProjectService
 	_, res, err := awxService.ListProjects(map[string]string{
 		"id":           d.Id(),
-		"organization": d.Get("organization_id").(string)},
+		"organization": strconv.Itoa(d.Get("organization_id").(int))},
 	)
 	if err != nil {
 		return err

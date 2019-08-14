@@ -36,6 +36,11 @@ func resourceInventoryGroupObject() *schema.Resource {
 				Default:   "",
 				StateFunc: normalizeJsonYaml,
 			},
+			"child_group_ids": {
+				Type:     schema.TypeList,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
+				Optional: true,
+			},
 		},
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
@@ -63,6 +68,16 @@ func resourceInventoryGroupCreate(d *schema.ResourceData, m interface{}) error {
 	}, map[string]string{})
 	if err != nil {
 		return err
+	}
+
+	if childGroups, ok :=  d.GetOkExists("child_group_ids"); ok {
+		for _, i := range childGroups.([]interface{}) {
+			_, err := awxService.AddChildGroup(result.ID, i.(int))
+
+			if err != nil {
+				return fmt.Errorf("Failed to add child group %d to group id %d ", i, result.ID)
+			}
+		}
 	}
 
 	d.SetId(strconv.Itoa(result.ID))

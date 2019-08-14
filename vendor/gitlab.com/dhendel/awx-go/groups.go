@@ -100,28 +100,3 @@ func (g *GroupService) DeleteGroup(id int) (*Group, error) {
 
 	return result, nil
 }
-
-func (g *GroupService) AddChildGroup(groupID, childID string) (*Group, error) {
-	result := new(Group)
-	endpoint := fmt.Sprintf("/api/v2/groups/%d/children", groupID)
-	payload := map[string]string{
-		"id": childID,
-	}
-
-	jsonPayload, err := json.Marshal(payload)
-
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := g.client.Requester.PostJSON(endpoint, bytes.NewReader(jsonPayload), result, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := CheckResponse(resp); err != nil {
-		return nil, err
-	}
-
-	return result, nil
-}

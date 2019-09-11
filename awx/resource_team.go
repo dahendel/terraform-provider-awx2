@@ -121,6 +121,9 @@ func resourceTeamDelete(d *schema.ResourceData, m interface{}) error {
 	awx := m.(*awxgo.AWX)
 	awxService := awx.TeamService
 	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
 	_, res, err := awxService.ListTeams(map[string]string{
 		"name": d.Get("name").(string)})
 	if len(res.Results) == 0 {

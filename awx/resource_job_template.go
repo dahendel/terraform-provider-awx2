@@ -15,6 +15,9 @@ func resourceJobTemplateObject() *schema.Resource {
 		Read:   resourceJobTemplateRead,
 		Delete: resourceJobTemplateDelete,
 		Update: resourceJobTemplateUpdate,
+		Importer: &schema.ResourceImporter{
+			State: importJobTemplateData,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
@@ -48,6 +51,11 @@ func resourceJobTemplateObject() *schema.Resource {
 			"credential_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+			},
+			"extra_credential_ids": &schema.Schema{
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeInt},
 			},
 			"vault_credential_id": &schema.Schema{
 				Type:     schema.TypeString,
@@ -180,9 +188,11 @@ func resourceJobTemplateObject() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
-		},
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			"job_id": {
+				Type: schema.TypeInt,
+				Optional: true,
+				Default: 0,
+			},
 		},
 
 		Timeouts: &schema.ResourceTimeout{
@@ -202,6 +212,10 @@ func resourceJobTemplateCreate(d *schema.ResourceData, m interface{}) error {
 		"name":    d.Get("name").(string),
 		"project": d.Get("project_id").(string)},
 	)
+
+	if err != nil {
+		return err
+	}
 
 	if len(res.Results) >= 1 {
 		return fmt.Errorf("JobTemplate with name %s already exists",
@@ -229,7 +243,8 @@ func resourceJobTemplateCreate(d *schema.ResourceData, m interface{}) error {
 			}
 		}
 	}
-	result, err := awxService.CreateJobTemplate(map[string]interface{}{
+
+	payload := map[string]interface{}{
 		"name":                     d.Get("name").(string),
 		"description":              d.Get("description").(string),
 		"job_type":                 d.Get("job_type").(string),
@@ -263,9 +278,21 @@ func resourceJobTemplateCreate(d *schema.ResourceData, m interface{}) error {
 		"custom_virtualenv":        AtoipOr(d.Get("custom_virtualenv").(string), nil),
 		"credential":               AtoipOr(d.Get("credential_id").(string), nil),
 		"vault_credential":         AtoipOr(d.Get("vault_credential_id").(string), nil),
-	}, map[string]string{})
+	}
+
+	result, err := awxService.CreateJobTemplate(payload, map[string]string{})
 	if err != nil {
 		return err
+	}
+
+	if creds, ok := d.GetOk("extra_credential_ids"); ok {
+		for _, c := range creds.([]interface{}) {
+			_, err := awxService.AddJobTemplateCredential(result.ID, c.(int))
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	d.SetId(strconv.Itoa(result.ID))
@@ -290,7 +317,7 @@ func resourceJobTemplateUpdate(d *schema.ResourceData, m interface{}) error {
 	if err != nil {
 		return err
 	}
-	_, err = awxService.UpdateJobTemplate(id, map[string]interface{}{
+	result, err := awxService.UpdateJobTemplate(id, map[string]interface{}{
 		"name":                     d.Get("name").(string),
 		"description":              d.Get("description").(string),
 		"job_type":                 d.Get("job_type").(string),
@@ -329,6 +356,16 @@ func resourceJobTemplateUpdate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
+	if creds, ok := d.GetOk("extra_credential_ids"); ok {
+		for _, c := range creds.([]interface{}) {
+			_, err := awxService.AddJobTemplateCredential(result.ID, c.(int))
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+
 	return resourceJobTemplateRead(d, m)
 }
 
@@ -336,9 +373,10 @@ func resourceJobTemplateRead(d *schema.ResourceData, m interface{}) error {
 	awx := m.(*awxgo.AWX)
 	awxService := awx.JobTemplateService
 	_, res, err := awxService.ListJobTemplates(map[string]string{
-		"name":    d.Get("name").(string),
-		"project": d.Get("project_id").(string)},
-	)
+		"id": strconv.Itoa(d.Get("job_id").(int)),
+		//"name":    d.Get("name").(string),
+		//"project": d.Get("project_id").(string),
+	})
 	if err != nil {
 		return err
 	}
@@ -377,6 +415,7 @@ func resourceJobTemplateDelete(d *schema.ResourceData, m interface{}) error {
 }
 
 func setJobTemplateResourceData(d *schema.ResourceData, r *awxgo.JobTemplate) *schema.ResourceData {
+	d.Set("job_id", r.ID)
 	d.Set("allow_simultaneous", r.AllowSimultaneous)
 	d.Set("ask_credential_on_launch", r.AskCredentialOnLaunch)
 	d.Set("ask_job_type_on_launch", r.AskJobTypeOnLaunch)
@@ -406,5 +445,40 @@ func setJobTemplateResourceData(d *schema.ResourceData, r *awxgo.JobTemplate) *s
 	d.Set("start_at_task", r.StartAtTask)
 	d.Set("survey_enabled", r.SurveyEnabled)
 	d.Set("verbosity", r.Verbosity)
+	extraIDs := getExtraIDs(r)
+	d.Set("extra_credential_ids", extraIDs)
 	return d
+}
+
+func importJobTemplateData(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	awx := m.(*awxgo.AWX)
+	awxService := awx.JobTemplateService
+
+	id, err :=strconv.Atoi(d.Id())
+
+	job, err := awxService.GetJobTemplate(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if job == nil {
+		return nil, err
+	}
+
+	resources := []*schema.ResourceData{setJobTemplateResourceData(d, job)}
+
+	return resources, nil
+}
+
+func getExtraIDs(template *awxgo.JobTemplate) []int {
+	creds := template.SummaryFields.ExtraCredentials
+	var ids []int
+	for _, c := range creds {
+		if cred, ok := c.(*awxgo.Credential); ok {
+			ids = append(ids, cred.ID)
+		}
+	}
+
+	return ids
 }

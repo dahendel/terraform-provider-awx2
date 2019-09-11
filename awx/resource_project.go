@@ -194,6 +194,9 @@ func resourceProjectDelete(d *schema.ResourceData, m interface{}) error {
 	awx := m.(*awxgo.AWX)
 	awxService := awx.ProjectService
 	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
 	var jobID int
 	var finished time.Time
 	_, res, err := awxService.ListProjects(map[string]string{

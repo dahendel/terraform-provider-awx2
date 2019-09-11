@@ -122,6 +122,9 @@ func resourceOrganizationDelete(d *schema.ResourceData, m interface{}) error {
 	awx := m.(*awxcli.AWX)
 	awxService := awx.OrganizationService
 	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
 	_, res, err := awxService.ListOrganizations(map[string]string{
 		"name": d.Get("name").(string)})
 	if len(res.Results) == 0 {

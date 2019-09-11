@@ -156,6 +156,9 @@ func resourceUserDelete(d *schema.ResourceData, m interface{}) error {
 	awx := m.(*awxgo.AWX)
 	awxService := awx.UserService
 	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
 	_, res, err := awxService.ListUsers(map[string]string{
 		"username": d.Get("username").(string)})
 	if len(res.Results) == 0 {

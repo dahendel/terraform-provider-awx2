@@ -9,9 +9,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func normalizeJsonYaml(s interface{}) string {
-	result := string("")
-	if j, ok := normalizeJsonOk(s); ok {
+func normalizeJSONYaml(s interface{}) string {
+	result := ""
+	if j, ok := normalizeJSONOk(s); ok {
 		result = j
 	} else if y, ok := normalizeYamlOk(s); ok {
 		result = y
@@ -20,7 +20,7 @@ func normalizeJsonYaml(s interface{}) string {
 	}
 	return result
 }
-func normalizeJsonOk(s interface{}) (string, bool) {
+func normalizeJSONOk(s interface{}) (string, bool) {
 	if s == nil || s == "" {
 		return "", true
 	}
@@ -33,8 +33,8 @@ func normalizeJsonOk(s interface{}) (string, bool) {
 	return string(b[:]), true
 }
 
-func normalizeJson(s interface{}) string {
-	v, _ := normalizeJsonOk(s)
+func normalizeJSON(s interface{}) string {
+	v, _ := normalizeJSONOk(s)
 	return v
 }
 

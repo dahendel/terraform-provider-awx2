@@ -43,7 +43,7 @@ func resourceInventoryObject() *schema.Resource {
 				Type:      schema.TypeString,
 				Optional:  true,
 				Default:   "",
-				StateFunc: normalizeJsonYaml,
+				StateFunc: normalizeJSONYaml,
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -145,6 +145,6 @@ func setInventoryResourceData(d *schema.ResourceData, r *awxgo.Inventory) *schem
 	d.Set("description", r.Description)
 	d.Set("kind", r.Kind)
 	d.Set("host_filter", r.HostFilter)
-	d.Set("variables", normalizeJsonYaml(r.Variables))
+	d.Set("variables", normalizeJSONYaml(r.Variables))
 	return d
 }

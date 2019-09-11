@@ -1,13 +1,24 @@
 # terraform-provider-awx
 
+FORKED FROM: https://github.com/mauromedda/terraform-provider-awx
+
 ***UNDER DEVELOPMENT ***
 terraform-provider-awx is still in developing, and it's roadmap could be found at [here](https://github.com/mauromedda/terraform-provider-awx/blob/master/ROADMAP.md).
 
+### Additions
+
+ - [ ] Terraform 0.12.x Supported
+ 
+ - [x] Support to add nested groups for InventoryGroups
+ 
+ - [ ] Support for extra credentials in a job template
+ 
+ - [x] Uses go modules  
+ 
 
 Terraform Provider
 ==================
 
-- [![Build Status](https://travis-ci.org/mauromedda/terraform-provider-awx.svg?branch=master)](https://travis-ci.org/mauromedda/terraform-provider-awx)
 - Website: https://www.terraform.io
 - [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
 - Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
@@ -16,8 +27,8 @@ Terraform Provider
 Requirements
 ------------
 
--	[Terraform](https://www.terraform.io/downloads.html) 0.10.x
--	[Go](https://golang.org/doc/install) 1.9 (to build the provider plugin)
+-	[Terraform](https://www.terraform.io/downloads.html) 0.12.6
+-	[Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
 
 Building The Provider
 ---------------------
@@ -25,8 +36,8 @@ Building The Provider
 Clone repository to: `$GOPATH/src/github.com/mauromedda/terraform-provider-awx.git`
 
 ```sh
-$ mkdir -p $GOPATH/src/github.com/mauromedda; cd $GOPATH/src/github.com/mauromedda
-$ git clone git@github.com:mauromedda/terraform-provider-awx.git
+go get gitlab.com/dhendel/terraform-provider-awx
+
 ```
 
 Enter the provider directory and build the provider

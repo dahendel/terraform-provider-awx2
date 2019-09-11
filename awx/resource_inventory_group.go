@@ -34,7 +34,7 @@ func resourceInventoryGroupObject() *schema.Resource {
 				Type:      schema.TypeString,
 				Optional:  true,
 				Default:   "",
-				StateFunc: normalizeJsonYaml,
+				StateFunc: normalizeJSONYaml,
 			},
 			"child_group_ids": {
 				Type:     schema.TypeList,
@@ -147,6 +147,6 @@ func setInventoryGroupResourceData(d *schema.ResourceData, r *awxgo.Group) *sche
 	d.Set("name", r.Name)
 	d.Set("description", r.Description)
 	d.Set("inventory_id", r.Inventory)
-	d.Set("variables", normalizeJsonYaml(r.Variables))
+	d.Set("variables", normalizeJSONYaml(r.Variables))
 	return d
 }

@@ -48,7 +48,7 @@ func resourceHostObject() *schema.Resource {
 				Type:      schema.TypeString,
 				Optional:  true,
 				Default:   "",
-				StateFunc: normalizeJsonYaml,
+				StateFunc: normalizeJSONYaml,
 			},
 		},
 		Importer: &schema.ResourceImporter{
@@ -176,7 +176,7 @@ func setHostResourceData(d *schema.ResourceData, r *awxgo.Host) *schema.Resource
 	d.Set("inventory_id", r.Inventory)
 	d.Set("enabled", r.Enabled)
 	d.Set("instance_id", r.InstanceID)
-	d.Set("variables", normalizeJsonYaml(r.Variables))
+	d.Set("variables", normalizeJSONYaml(r.Variables))
 	d.Set("group_ids", d.Get("group_ids").([]interface{}))
 	return d
 }

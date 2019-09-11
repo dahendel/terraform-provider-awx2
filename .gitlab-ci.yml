@@ -5,8 +5,11 @@ cache:
     - .cache
 
 stages:
-  - test
   - build
+
+before_script:
+  - mkdir -p .cache
+  - export GOPATH="$CI_PROJECT_DIR/.cache"
 
 build:
   stage: build
@@ -14,3 +17,8 @@ build:
     - GOARCH="amd64" GOOS="linux" go build -o terraform-provider-awx_linux_amd64
     - GOARCH="amd64" GOOS="windows" go build -o terraform-provider-awx_x86_64
     - GOARCH="amd64" GOOS="darwin" go build -o terraform-provider-awx_darwin_amd64
+  artifacts:
+    paths:
+      - terraform-provider-awx_linux_amd64
+      - terraform-provider-awx_windows_x86_64
+      - terraform-provider-awx_darwin_amd64

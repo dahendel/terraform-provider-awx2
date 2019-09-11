@@ -232,7 +232,7 @@ github.com/zclconf/go-cty/cty/function
 github.com/zclconf/go-cty/cty/function/stdlib
 # github.com/zclconf/go-cty-yaml v1.0.1
 github.com/zclconf/go-cty-yaml
-# gitlab.com/dhendel/awx-go v0.0.3
+# gitlab.com/dhendel/awx-go v0.0.10-0.20190819154037-56b56be0cb9c
 gitlab.com/dhendel/awx-go
 # go.opencensus.io v0.18.0
 go.opencensus.io/trace

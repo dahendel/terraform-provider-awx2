@@ -13,9 +13,9 @@ before_script:
 build:
   stage: build
   script:
-    - GOARCH="amd64" GOOS="linux" go build -o terraform-provider-awx_linux_amd64
-    - GOARCH="amd64" GOOS="windows" go build -o terraform-provider-awx_x86_64
-    - GOARCH="amd64" GOOS="darwin" go build -o terraform-provider-awx_darwin_amd64
+    - GOARCH="amd64" GOOS="linux" go build -mod vendor -o $CI_PROJECT_DIR/terraform-provider-awx_linux_amd64
+    - GOARCH="amd64" GOOS="windows" go build -mod vendor -o $CI_PROJECT_DIR/terraform-provider-awx_x86_64
+    - GOARCH="amd64" GOOS="darwin" go build -mod vendor -o $CI_PROJECT_DIR/terraform-provider-awx_darwin_amd64
   artifacts:
     paths:
       - terraform-provider-awx_linux_amd64

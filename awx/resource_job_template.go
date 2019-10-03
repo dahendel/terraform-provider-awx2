@@ -37,7 +37,8 @@ func resourceJobTemplateObject() *schema.Resource {
 			},
 			"inventory_id": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				ConflictsWith: []string{"ask_inventory_on_launch"},
 			},
 			"project_id": &schema.Schema{
 				Type:     schema.TypeString,
@@ -142,6 +143,7 @@ func resourceJobTemplateObject() *schema.Resource {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
+				ConflictsWith: []string{"inventory_id"},
 			},
 			"ask_variables_on_launch": &schema.Schema{
 				Type:     schema.TypeBool,

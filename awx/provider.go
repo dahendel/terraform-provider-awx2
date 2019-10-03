@@ -60,6 +60,11 @@ func Provider() terraform.ResourceProvider {
 			"awx_team_role":         resourceTeamRoleObject(),
 			"awx_organization":      resourceOrganizationObject(),
 		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"awx_project": dataSourceProjectObject(),
+			"awx_inventory": dataSourceInventory(),
+			"awx_job_template": dataSourceJobTemplate(),
+		},
 
 		ConfigureFunc: providerConfigure,
 	}

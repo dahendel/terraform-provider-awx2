@@ -18,7 +18,7 @@ type Config struct {
 // Client for Tower/AWX API v2
 func (c *Config) Client() *awxgo.AWX {
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: c.Sslverify},
 	}
 
 	client := &http.Client{Transport: tr}

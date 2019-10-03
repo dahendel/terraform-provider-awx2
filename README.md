@@ -7,7 +7,7 @@ terraform-provider-awx is still in developing, and it's roadmap could be found a
 
 ### Additions
 
- - [ ] Terraform 0.12.x Supported
+ - [x] Terraform 0.12.x Supported
  
  - [x] Support to add nested groups for InventoryGroups
  
@@ -15,6 +15,7 @@ terraform-provider-awx is still in developing, and it's roadmap could be found a
  
  - [x] Uses go modules  
  
+ - [ ] DataSources
 
 Terraform Provider
 ==================

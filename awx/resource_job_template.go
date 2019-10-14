@@ -2,6 +2,7 @@ package awx
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform/helper/validation"
 	"strconv"
 	"time"
 
@@ -34,6 +35,11 @@ func resourceJobTemplateObject() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "One of: run, check, scan",
+				ValidateFunc: validation.StringInSlice([]string{
+					"run",
+					"check",
+					"scan",
+				}, true),
 			},
 			"inventory_id": &schema.Schema{
 				Type:     schema.TypeString,
@@ -78,6 +84,8 @@ func resourceJobTemplateObject() *schema.Resource {
 				Optional:    true,
 				Default:     0,
 				Description: "One of 0,1,2,3,4,5",
+				ValidateFunc: validation.IntInSlice([]int{0,1,2,3,4,5},
+				),
 			},
 			"extra_vars": &schema.Schema{
 				Type:     schema.TypeString,

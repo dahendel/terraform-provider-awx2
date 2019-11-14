@@ -36,7 +36,7 @@ Building The Provider
 ---------------------
 
 ```bash
-go get  
+go get github.com/dahendel/terraform-provider-awx2
 cd $GOPATH/src/github.com/dahendel/terraform-provider-awx2
 go build -mod vendor -o terraform-provider-awx
 ```

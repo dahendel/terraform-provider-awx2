@@ -61,11 +61,6 @@ func dataSourceJobTemplateRead(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	if res.Results[0].SurveyEnabled {
-		surveyEndpoint := res.Results[0].Related.SurveySpec
-
-	}
-
 	d.SetId(strconv.Itoa(res.Results[0].ID))
 	d = setJobTemplateDataSourceData(d, res.Results[0])
 	return nil

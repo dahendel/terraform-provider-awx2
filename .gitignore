@@ -7,7 +7,7 @@
 .vscode/*
 .idea
 # Build executables
-terraform-provider-awx
+terraform-provider-awx2
 
 # Terraform state file
 terraform.tfstate*

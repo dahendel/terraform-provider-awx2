@@ -15,20 +15,19 @@ func dataSourceInventoryGroup() *schema.Resource {
 				Required:    true,
 				Description: "Name of this group",
 			},
-			"id": &schema.Schema {
-				Type:	schema.TypeInt,
-				Computed: true,
+			"id": &schema.Schema{
+				Type:        schema.TypeInt,
+				Computed:    true,
 				Description: "Id of the ansible inventory group",
 			},
-			"inventory_id": &schema.Schema {
-				Type:	schema.TypeInt,
-				Computed: true,
+			"inventory_id": &schema.Schema{
+				Type:        schema.TypeInt,
+				Computed:    true,
 				Description: "Id of the ansible inventory this group belongs to",
 			},
 		},
 	}
 }
-
 
 func dataSourceInventoryGroupRead(d *schema.ResourceData, meta interface{}) error {
 	awx := meta.(*awx.AWX)

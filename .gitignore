@@ -19,5 +19,5 @@ terraform.tfstate*
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 *.log
-.goreleaser.yml
 dist
+docker/awx

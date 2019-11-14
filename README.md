@@ -11,7 +11,7 @@ terraform-provider-awx is still in developing, and it's roadmap could be found a
  
  - [x] Support to add nested groups for InventoryGroups
  
- - [ ] Support for extra credentials in a job template
+ - [x] Support for extra credentials in a job template
  
  - [x] Uses go modules  
  
@@ -30,22 +30,15 @@ Requirements
 
 -	[Terraform](https://www.terraform.io/downloads.html) 0.12.6
 -	[Go](https://golang.org/doc/install) 1.12 (to build the provider plugin)
+-   [Go Modules](https://blog.golang.org/modules2019)
 
 Building The Provider
 ---------------------
 
-Clone repository to: `$GOPATH/src/github.com/mauromedda/terraform-provider-awx.git`
-
-```sh
-go get gitlab.com/dhendel/terraform-provider-awx
-
-```
-
-Enter the provider directory and build the provider
-
-```sh
-$ cd $GOPATH/src/github.com/mauromedda/terraform-provider-awx
-$ make build
+```bash
+go get  
+cd $GOPATH/src/github.com/dahendel/terraform-provider-awx2
+go build -mod vendor -o terraform-provider-awx
 ```
 
 Using the provider

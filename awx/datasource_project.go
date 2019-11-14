@@ -8,22 +8,21 @@ import (
 
 func dataSourceProjectObject() *schema.Resource {
 	return &schema.Resource{
-		Read:   dataSourceProjectObjectRead,
+		Read: dataSourceProjectObjectRead,
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of this project",
 			},
-			"id": &schema.Schema {
-				Type:	schema.TypeInt,
-				Computed: true,
+			"id": &schema.Schema{
+				Type:        schema.TypeInt,
+				Computed:    true,
 				Description: "Id of the ansible project",
 			},
 		},
 	}
 }
-
 
 func dataSourceProjectObjectRead(d *schema.ResourceData, meta interface{}) error {
 	awx := meta.(*awx.AWX)

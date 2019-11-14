@@ -49,7 +49,7 @@ func testAccCheckStateTeamRole(skey, svalue string) resource.TestCheckFunc {
 
 const testAccTeamRoleConfig = `
 resource "awx_team_role" "testacc-team_role_1" {
-	team_id = 4
+	team_id = 1
 	organization_id = 1
 	resource_type = "inventory"
 	resource_name = "Demo Inventory"

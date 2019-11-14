@@ -1,0 +1,151 @@
+#jinja2: lstrip_blocks: True
+version: '2'
+services:
+
+  web:
+    image: {{ awx_web_docker_actual_image }}
+    container_name: awx_web
+    depends_on:
+      - rabbitmq
+      - memcached
+      {% if pg_hostname is not defined %}
+      - postgres
+      {% endif %}
+    ports:
+      {% if ssl_certificate is defined %}
+      - "{{ host_port_ssl }}:8053"
+      {% endif %}
+      - "{{ host_port }}:8052"
+    hostname: {{ awx_web_hostname }}
+    user: root
+    restart: unless-stopped
+    volumes:
+      - "{{ docker_compose_dir }}/SECRET_KEY:/etc/tower/SECRET_KEY"
+      - "{{ docker_compose_dir }}/environment.sh:/etc/tower/conf.d/environment.sh"
+      - "{{ docker_compose_dir }}/credentials.py:/etc/tower/conf.d/credentials.py"
+      - "{{ docker_compose_dir }}/nginx.conf:/etc/nginx/nginx.conf:ro"
+    {% if project_data_dir is defined %}
+      - "{{ project_data_dir +':/var/lib/awx/projects:rw' }}"
+    {% endif %}
+    {% if custom_venv_dir is defined %}
+      - "{{ custom_venv_dir +':'+ custom_venv_dir +':rw' }}"
+    {% endif %}
+    {% if ca_trust_dir is defined %}
+      - "{{ ca_trust_dir +':/etc/pki/ca-trust/source/anchors:ro' }}"
+    {% endif %}
+    {% if ssl_certificate is defined %}
+      - "{{ ssl_certificate +':/etc/nginx/awxweb.pem:ro' }}"
+    {% endif %}
+    {% if (awx_container_search_domains is defined) and (',' in awx_container_search_domains) %}
+    {% set awx_container_search_domains_list = awx_container_search_domains.split(',') %}
+    dns_search:
+    {% for awx_container_search_domain in awx_container_search_domains_list %}
+      - {{ awx_container_search_domain }}
+    {% endfor %}
+    {% elif awx_container_search_domains is defined %}
+    dns_search: "{{ awx_container_search_domains }}"
+    {% endif %}
+    {% if (awx_alternate_dns_servers is defined) and (',' in awx_alternate_dns_servers) %}
+    {% set awx_alternate_dns_servers_list = awx_alternate_dns_servers.split(',') %}
+    dns:
+    {% for awx_alternate_dns_server in awx_alternate_dns_servers_list %}
+      - {{ awx_alternate_dns_server }}
+    {% endfor %}
+    {% elif awx_alternate_dns_servers is defined %}
+    dns: "{{ awx_alternate_dns_servers }}"
+    {% endif %}
+    environment:
+      http_proxy: {{ http_proxy | default('') }}
+      https_proxy: {{ https_proxy | default('') }}
+      no_proxy: {{ no_proxy | default('') }}
+
+  task:
+    image: {{ awx_task_docker_actual_image }}
+    container_name: awx_task
+    depends_on:
+      - rabbitmq
+      - memcached
+      - web
+      {% if pg_hostname is not defined %}
+      - postgres
+      {% endif %}
+    hostname: {{ awx_task_hostname }}
+    user: root
+    restart: unless-stopped
+    volumes:
+      - "{{ docker_compose_dir }}/SECRET_KEY:/etc/tower/SECRET_KEY"
+      - "{{ docker_compose_dir }}/environment.sh:/etc/tower/conf.d/environment.sh"
+      - "{{ docker_compose_dir }}/credentials.py:/etc/tower/conf.d/credentials.py"
+    {% if project_data_dir is defined %}
+      - "{{ project_data_dir +':/var/lib/awx/projects:rw' }}"
+    {% endif %}
+    {% if custom_venv_dir is defined %}
+      - "{{ custom_venv_dir +':'+ custom_venv_dir +':rw' }}"
+    {% endif %}
+    {% if ca_trust_dir is defined %}
+      - "{{ ca_trust_dir +':/etc/pki/ca-trust/source/anchors:ro' }}"
+    {% endif %}
+    {% if ssl_certificate is defined %}
+      - "{{ ssl_certificate +':/etc/nginx/awxweb.pem:ro' }}"
+    {% endif %}
+    {% if (awx_container_search_domains is defined) and (',' in awx_container_search_domains) %}
+    {% set awx_container_search_domains_list = awx_container_search_domains.split(',') %}
+    dns_search:
+    {% for awx_container_search_domain in awx_container_search_domains_list %}
+      - {{ awx_container_search_domain }}
+    {% endfor %}
+    {% elif awx_container_search_domains is defined %}
+    dns_search: "{{ awx_container_search_domains }}"
+    {% endif %}
+    {% if (awx_alternate_dns_servers is defined) and (',' in awx_alternate_dns_servers) %}
+    {% set awx_alternate_dns_servers_list = awx_alternate_dns_servers.split(',') %}
+    dns:
+    {% for awx_alternate_dns_server in awx_alternate_dns_servers_list %}
+      - {{ awx_alternate_dns_server }}
+    {% endfor %}
+    {% elif awx_alternate_dns_servers is defined %}
+    dns: "{{ awx_alternate_dns_servers }}"
+    {% endif %}
+    environment:
+      http_proxy: {{ http_proxy | default('') }}
+      https_proxy: {{ https_proxy | default('') }}
+      no_proxy: {{ no_proxy | default('') }}
+
+  rabbitmq:
+    image: {{ rabbitmq_image }}
+    container_name: awx_rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_VHOST: "{{ rabbitmq_default_vhost }}"
+      RABBITMQ_DEFAULT_USER: "{{ rabbitmq_user }}"
+      RABBITMQ_DEFAULT_PASS: "{{ rabbitmq_password | quote }}"
+      RABBITMQ_ERLANG_COOKIE: {{ rabbitmq_erlang_cookie }}
+      http_proxy: {{ http_proxy | default('') }}
+      https_proxy: {{ https_proxy | default('') }}
+      no_proxy: {{ no_proxy | default('') }}
+
+  memcached:
+    image: "{{ memcached_image }}:{{ memcached_version }}"
+    container_name: awx_memcached
+    restart: unless-stopped
+    environment:
+      http_proxy: {{ http_proxy | default('') }}
+      https_proxy: {{ https_proxy | default('') }}
+      no_proxy: {{ no_proxy | default('') }}
+
+  {% if pg_hostname is not defined %}
+  postgres:
+    image: {{ postgresql_image }}
+    container_name: awx_postgres
+    restart: unless-stopped
+    volumes:
+      - {{ postgres_data_dir }}/10/data/:/var/lib/postgresql/data/pgdata:Z
+    environment:
+      POSTGRES_USER: {{ pg_username }}
+      POSTGRES_PASSWORD: {{ pg_password }}
+      POSTGRES_DB: {{ pg_database }}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      http_proxy: {{ http_proxy | default('') }}
+      https_proxy: {{ https_proxy | default('') }}
+      no_proxy: {{ no_proxy | default('') }}
+  {% endif %}

@@ -70,7 +70,7 @@ func resourceInventoryGroupCreate(d *schema.ResourceData, m interface{}) error {
 		return err
 	}
 
-	if childGroups, ok :=  d.GetOkExists("child_group_ids"); ok {
+	if childGroups, ok := d.GetOkExists("child_group_ids"); ok {
 		for _, i := range childGroups.([]interface{}) {
 			_, err := awxService.AddChildGroup(result.ID, i.(int))
 

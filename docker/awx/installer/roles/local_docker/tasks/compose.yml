@@ -1,0 +1,38 @@
+---
+- name: Create {{ docker_compose_dir }} directory
+  file:
+    path: "{{ docker_compose_dir }}"
+    state: directory
+
+- name: Create Docker Compose Configuration
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ docker_compose_dir }}/{{ item }}"
+    mode: 0600
+  with_items:
+    - environment.sh
+    - credentials.py
+    - docker-compose.yml
+    - nginx.conf
+  register: awx_compose_config
+
+- name: Render SECRET_KEY file
+  copy:
+    content: "{{ secret_key }}"
+    dest: "{{ docker_compose_dir }}/SECRET_KEY"
+    mode: 0600
+  register: awx_secret_key
+
+- name: Start the containers
+  docker_service:
+    project_src: "{{ docker_compose_dir }}"
+    restarted: "{{ awx_compose_config is changed or awx_secret_key is changed }}"
+  register: awx_compose_start
+
+- name: Update CA trust in awx_web container
+  command: docker exec awx_web '/usr/bin/update-ca-trust'
+  when: awx_compose_config.changed or awx_compose_start.changed
+
+- name: Update CA trust in awx_task container
+  command: docker exec awx_task '/usr/bin/update-ca-trust'
+  when: awx_compose_config.changed or awx_compose_start.changed

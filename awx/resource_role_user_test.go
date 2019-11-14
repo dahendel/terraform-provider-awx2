@@ -48,7 +48,7 @@ func testAccCheckStateUserRole(skey, svalue string) resource.TestCheckFunc {
 
 const testAccUserRoleConfig = `
 resource "awx_user_role" "testacc-user_role_1" {
-	user_id = 4
+	user_id = 1
 	organization_id = 1
 	resource_type = "inventory"
 	resource_name = "Demo Inventory"
@@ -56,7 +56,7 @@ resource "awx_user_role" "testacc-user_role_1" {
   }
 
   resource "awx_user_role" "testacc-user_role_2" {
-	user_id = 4
+	user_id = 1
 	organization_id = 1
 	resource_type = "organization"
 	resource_name = "organization"

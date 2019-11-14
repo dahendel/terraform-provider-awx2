@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/dahendel/terraform-provider-awx2/awx"
 	"github.com/hashicorp/terraform/plugin"
 	"github.com/hashicorp/terraform/terraform"
-	"gitlab.com/dhendel/terraform-provider-awx/awx"
 )
 
 func main() {

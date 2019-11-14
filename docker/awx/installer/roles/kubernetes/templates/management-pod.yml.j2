@@ -1,0 +1,70 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ansible-tower-management
+  namespace: {{ kubernetes_namespace }}
+spec:
+  containers:
+    - name: ansible-tower-management
+      image: "{{ kubernetes_task_image }}:{{ kubernetes_task_version }}"
+      command: ["sleep", "infinity"]
+      volumeMounts:
+        - name: {{ kubernetes_deployment_name }}-application-config
+          mountPath: "/etc/tower/settings.py"
+          subPath: settings.py
+          readOnly: true
+
+        - name: "{{ kubernetes_deployment_name }}-application-credentials"
+          mountPath: "/etc/tower/conf.d/"
+          readOnly: true
+
+        - name: {{ kubernetes_deployment_name }}-secret-key
+          mountPath: "/etc/tower/SECRET_KEY"
+          subPath: SECRET_KEY
+          readOnly: true
+      resources:
+{% if management_mem_limit is defined or management_cpu_limit is defined %}
+        limits:
+{% endif %}
+{% if management_mem_limit is defined %}
+          memory: "{{ management_mem_limit }}Gi"
+{% endif %}
+{% if management_cpu_limit is defined %}
+          cpu: "{{ management_cpu_limit }}m"
+{% endif %}
+{% if tolerations is defined %}
+  tolerations:
+{{ tolerations | to_nice_yaml(indent=2) | indent(width=4, indentfirst=True) }}
+{% endif %}
+{% if node_selector is defined %}
+  nodeSelector:
+{{ node_selector | to_nice_yaml(indent=2) | indent(width=4, indentfirst=True) }}
+{% endif %}
+{% if affinity is defined %}
+  affinity:
+{{ affinity | to_nice_yaml(indent=2) | indent(width=4, indentfirst=True) }}
+{% endif %}
+  volumes:
+    - name: {{ kubernetes_deployment_name }}-application-config
+      configMap:
+        name: {{ kubernetes_deployment_name }}-config
+        items:
+          - key: {{ kubernetes_deployment_name }}_settings
+            path: settings.py
+
+    - name: {{ kubernetes_deployment_name }}-secret-key
+      secret:
+        secretName: "{{ kubernetes_deployment_name }}-secrets"
+        items:
+          - key: secret_key
+            path: SECRET_KEY
+
+    - name: "{{ kubernetes_deployment_name }}-application-credentials"
+      secret:
+        secretName: "{{ kubernetes_deployment_name }}-secrets"
+        items:
+          - key: credentials_py
+            path: 'credentials.py'
+
+  restartPolicy: Never

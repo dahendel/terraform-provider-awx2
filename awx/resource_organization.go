@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
-	awxcli "gitlab.com/dhendel/awx-go"
+	awxgo "gitlab.com/dhendel/awx-go"
 )
 
 func resourceOrganizationObject() *schema.Resource {
@@ -49,7 +49,7 @@ func resourceOrganizationObject() *schema.Resource {
 }
 
 func resourceOrganizationCreate(d *schema.ResourceData, m interface{}) error {
-	awx := m.(*awxcli.AWX)
+	awx := m.(*awxgo.AWX)
 	awxService := awx.OrganizationService
 	_, res, err := awxService.ListOrganizations(map[string]string{
 		"name": d.Get("name").(string)})
@@ -75,7 +75,7 @@ func resourceOrganizationCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceOrganizationUpdate(d *schema.ResourceData, m interface{}) error {
-	awx := m.(*awxcli.AWX)
+	awx := m.(*awxgo.AWX)
 	awxService := awx.OrganizationService
 	_, res, err := awxService.ListOrganizations(map[string]string{
 		"id": d.Id()},
@@ -104,7 +104,7 @@ func resourceOrganizationUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceOrganizationRead(d *schema.ResourceData, m interface{}) error {
-	awx := m.(*awxcli.AWX)
+	awx := m.(*awxgo.AWX)
 	awxService := awx.OrganizationService
 	_, res, err := awxService.ListOrganizations(map[string]string{
 		"name": d.Get("name").(string)})
@@ -119,7 +119,7 @@ func resourceOrganizationRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceOrganizationDelete(d *schema.ResourceData, m interface{}) error {
-	awx := m.(*awxcli.AWX)
+	awx := m.(*awxgo.AWX)
 	awxService := awx.OrganizationService
 	id, err := strconv.Atoi(d.Id())
 	if err != nil {
@@ -141,7 +141,7 @@ func resourceOrganizationDelete(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func setOrganizationResourceData(d *schema.ResourceData, r *awxcli.Organization) *schema.ResourceData {
+func setOrganizationResourceData(d *schema.ResourceData, r *awxgo.Organization) *schema.ResourceData {
 	d.Set("name", r.Name)
 	d.Set("description", r.Description)
 	d.Set("custom_virtualenv", r.CustomVirtualEnv)

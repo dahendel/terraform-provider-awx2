@@ -13,41 +13,21 @@ func dataSourceJobTemplate() *schema.Resource {
 			"name": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of job template",
+				Description: "Name of this job template",
 			},
-			"id": &schema.Schema {
-				Type:	schema.TypeInt,
-				Computed: true,
-				Description: "Id of the AWX job template",
+			"id": &schema.Schema{
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Id of the ansible job template",
 			},
 			"prompt_inventory": &schema.Schema{
-				Type: schema.TypeBool,
-				Computed: true,
+				Type:        schema.TypeBool,
+				Computed:    true,
 				Description: "Requires an inventory ID be passed",
-			},
-			"survey_spec": {
-				Type: schema.TypeList,
-				Computed: true,
-				Description: "A list of variables that need to be passed to the job template",
-				Elem: schema.Schema{
-					Type: schema.TypeMap,
-					Elem: schema.Schema{
-						Type: schema.TypeString,
-					},
-				},
-			},
-			"callback_url": {
-				Type: schema.TypeString,
-				Computed: true,
-				Description: "The callback url for the job template if enabled",
-			},
-			"host_config_key": {
-				Type: schema.TypeString,
 			},
 		},
 	}
 }
-
 
 func dataSourceJobTemplateRead(d *schema.ResourceData, meta interface{}) error {
 	awx := meta.(*awx.AWX)
@@ -60,7 +40,6 @@ func dataSourceJobTemplateRead(d *schema.ResourceData, meta interface{}) error {
 	if len(res.Results) == 0 {
 		return nil
 	}
-
 	d.SetId(strconv.Itoa(res.Results[0].ID))
 	d = setJobTemplateDataSourceData(d, res.Results[0])
 	return nil
@@ -70,6 +49,5 @@ func setJobTemplateDataSourceData(d *schema.ResourceData, r *awx.JobTemplate) *s
 	d.Set("name", r.Name)
 	d.Set("id", r.ID)
 	d.Set("prompt_inventory", r.AskInventoryOnLaunch)
-
 	return d
 }

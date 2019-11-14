@@ -30,7 +30,7 @@ archive:
   files:
     - none*
 release:
-  disable: true
+  disable: false
 checksum:
   name_template: 'checksums.txt'
 snapshot:

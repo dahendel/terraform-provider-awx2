@@ -1,0 +1,46 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+project_name: terraform-provider-awx
+#before:
+#  hooks:
+#    - godep restore
+builds:
+  -
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+      - darwin
+      - linux
+    ignore:
+      - goos: windows
+        goarch: 386
+      - goos: darwin
+        goarch: 386
+      - goos: linux
+        goarch: 386
+    binary: "{{ .ProjectName }}_v{{.Version}}"
+
+archive:
+  format_overrides:
+    - goos: windows
+      format: zip
+  replacements:
+    amd64: x86_64
+  files:
+    - none*
+release:
+  disable: true
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+artifactories:
+  - name: production
+    target: "${ARTIFACTORY_TFP_URL}"

@@ -41,6 +41,3 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-artifactories:
-  - name: production
-    target: "${ARTIFACTORY_TFP_URL}"

@@ -38,6 +38,7 @@ resource "awx_inventory_group" "etcd" {
 resource "awx_host" "k8s-nodes" {
   count        = 3
   name         = "k8s-node-${count.index}.awx.local"
+  enabled      = true
   description  = "Kubernetes minion ${count.index}"
   inventory_id = "${awx_inventory.default.id}"
   group_ids    = ["${awx_inventory_group.etcd.id}", "${awx_inventory_group.k8s-nodes.id}"]
@@ -50,6 +51,7 @@ VARIABLES
 
 resource "awx_host" "k8s-node" {
   name         = "k8s-node-4.awx.local"
+  enabled      = true
   description  = "Kubernetes minion ${count.index}"
   inventory_id = "${awx_inventory.default.id}"
   group_ids    = ["${awx_inventory_group.etcd.id}"]

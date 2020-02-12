@@ -2,6 +2,8 @@
 
 FORKED FROM: https://github.com/mauromedda/terraform-provider-awx
 
+Also Check Out AWX/Tower Provisioner: https://github.com/dahendel/terraform-provisioner-awx
+
 ***UNDER DEVELOPMENT ***
 terraform-provider-awx is still in developing, and it's roadmap could be found at [here](https://github.com/mauromedda/terraform-provider-awx/blob/master/ROADMAP.md).
 

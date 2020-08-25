@@ -1,3 +1,5 @@
+# Archived Please see https://github.com/davidfischer-ch/terraform-provider-awx
+
 # terraform-provider-awx2
 
 FORKED FROM: https://github.com/mauromedda/terraform-provider-awx
